@@ -1,0 +1,51 @@
+<form id="login" method="post" action="/opentaps/control/login">
+        <p class="top">
+          <label for="username">Username</label>
+          <input class="inputLogin" type="text" id="username" name="USERNAME" size="50">
+        </p>
+        <p>
+          <label for="password">Password</label>
+          <input class="inputLogin" type="password" id="password" name="PASSWORD" size="50">
+        </p>
+
+        <p>
+          <input class="decorativeSubmit" type="submit" value="Login">
+        </p>
+      </form>
+
+Parent - Child Relationship :
+( parent realtive xpath)/(tagName of child) --> //form[@id="login"]/p
+
+Grandparent - GrandChild Relationship :
+GrandParent relative xpath//tagName of grand child --> //form[@id="login"]//input
+
+Child to Parent relationship :
+Child relative xpath/parent::parent tagName --> //input[@id="username"]/parent::p
+
+
+GrandChild to GrandParent relationship :
+GrandChild relative xpath/ancestor::tagName of grand parent -->  //input[@id="username"]/ancestor::form
+
+--------------------------------------------------------------------------------------------------
+
+Elder Sibling to Younger Sibling :(Top to Bottom)
+
+(Elder sibling relative xpath)/following-sibling::tagName of younger sibling --> //label[text()='Username']/following-sibling::input
+Amazon example : //label[text()="Search Amazon.in"]/following-sibling::input
+
+Younger to Elder Sibling : (Bottom to Top)
+
+(Younger sibling relative xpath)/preceding-sibling::tagName of elder sibling -->(//input[@id="username"])/preceding-sibling::label
+
+--------------------------------------------------------------------------------------------------
+
+Elder Cousin to Younger Cousin :(Top to Bottom)
+
+Elder cousin relative xpath/following::tagName of younger Cousin 
+
+
+Younger Cousin to Elder Cousin : (Bottom to Top)
+
+
+
+
