@@ -1,0 +1,347 @@
+
+📑 Agenda for Week 8 Day 1: 
+Building Framework using Page Object Model using OOPS concept and Test Annotations.
+
+📆 18th April, Saturday
+
+🕝 Session Highlights
+
+
+1. Test Annotations
+* Enhancing test readability and control using annotations.
+* Examples: Skipping, focusing, or tagging specific tests.
+
+2. Creating framework using POM (Page Object Model) design pattern
+Design pattern to enhance test maintainability and reusability.
+Examples: Creating page classes and using them in test cases.
+
+⏸ \[Break / Practice]
+
+3. Implementing Abstraction, Data parametrization
+Using abstract classes and methods to define templates.
+Using Data parameterization in POM
+Examples: Designing partially implemented base classes.
+
+4. Custom Fixture
+Creating reusable test setup using custom fixtures.
+Implementing the same in POM.
+Examples: Injecting test data, context, or utilities.
+
+---
+
+Test Annotation
+---
+
+test.only --> focus on a specific test.
+test.skip --> ignore the test from execution
+test.fixme --> track and know failures that are yet tp be fixed
+test.fail --> for negative testing --> test has to fail is the expectation
+test.slow --> triple the timeout of the tests execution --> 30 s --> 60 s for the entire test execution
+test.describe --> grouping the test depending on the status of the other test.
+test.use -->use the functionalities
+
+**************************************************************************************
+
+```ts
+import { test, expect } from "@playwright/test";
+
+/**
+ * =========================
+ * test.skip()
+ * =========================
+ * Purpose:
+ * - Do NOT execute the test at all
+ * - Used when environment / feature is NOT ready
+ */
+test.skip('Skip when environment is not ready', async ({ page }) => {
+  await page.goto('http://leaftaps.com/opentaps/control/main');
+
+  await page.locator('#username').fill('democsr');
+  await page.locator('#password').fill('crmsfa');
+  await page.locator('.decorativeSubmit').click();
+  await page.locator('text=CRM/SFA').click();
+});
+
+
+/**
+ * =========================
+ * test.fixme()
+ * =========================
+ * Purpose:
+ * - Test is known to be broken or flaky
+ * - Acts as a reminder to FIX later
+ * - Test will be skipped, but marked as "needs fixing"
+ */
+test.fixme('Test is under repair / flaky', async ({ page }) => {
+  await page.goto('http://leaftaps.com/opentaps/control/main');
+
+  await page.locator('#username').fill('democsr');
+  await page.locator('#password').fill('crmsfa');
+  await page.locator('.decorativeSubmit').click();
+  await page.locator('text=CRM/SFA').click();
+});
+
+
+/**
+ * =========================
+ * test.fail()
+ * =========================
+ * Purpose:
+ * - Test WILL run
+ * - Failure is EXPECTED due to a known bug
+ * - Failure will NOT break CI
+ */
+test.fail('Known bug: CRM link not visible', async ({ page }) => {
+  await page.goto('http://leaftaps.com/opentaps/control/main');
+
+  await page.locator('#username').fill('democsr');
+  await page.locator('#password').fill('crmsfa');
+  await page.locator('.decorativeSubmit').click();
+
+  // Known issue: locator fails
+  await expect(page.locator('text=CRM/SFA')).toBeVisible();
+});
+
+
+/**
+ * =========================
+ * test.slow()
+ * =========================
+ * Purpose:
+ * - Mark test as slow
+ * - Doubles the default timeout
+ */
+test('Slow test example (timeout increased)', async ({ page }) => {
+
+  test.slow(); // increases timeout (approx 2x default)
+
+  await page.goto('http://leaftaps.com/opentaps/control/main');
+
+  await page.locator('#username').fill('democsr');
+  await page.locator('#password').fill('crmsfa');
+
+  await page.locator('.decorativeSubmit').click();
+
+  await page.locator('text=CRM/SFA').click();
+});
+```
+
+---
+
+##  Simple Explanation 
+
+###  `test.skip()`
+
+>  Don’t run this test at all
+
+* Used when:
+
+  * Environment is down
+  * Feature not implemented
+* Result in report: **Skipped**
+
+---
+
+###  `test.fixme()`
+
+>  This test is broken – fix it later
+
+* Same as skip
+* But tells the **team**:
+
+  > “This test needs fixing”
+* Very useful for flaky tests
+
+---
+
+###  `test.fail()`
+
+>  Run the test, but failure is expected
+
+* Test **executes**
+* If it fails → ✔ expected
+* If it passes → ⚠ unexpected (bug may be fixed!)
+
+---
+
+###  `test.slow()`
+
+>  This test needs more time
+
+* Increases timeout
+* Useful for:
+
+  * Slow APIs
+  * Heavy pages
+  * Large uploads/downloads
+
+---
+
+##  Quick Memory Table
+
+| Annotation   | Runs? | Purpose                         |
+| ------------ | ----- | ------------------------------- |
+| `test.skip`  | ❌ No  | Environment / feature not ready |
+| `test.fixme` | ❌ No  | Broken / flaky test             |
+| `test.fail`  | ✅ Yes | Known bug                       |
+| `test.slow`  | ✅ Yes | Needs more time                 |
+
+
+---
+
+Page Object Model :
+
+POM means:
+
+Each web page (or module) of your application is represented by a separate class,
+and that class contains locators and methods that act on that page.
+
+login--> welcome page --> home page --> LeadPage -->CreatLead --> viewLead
+                                                ---> findLead --> VieLead --> Edit
+                                                ----> MergeLead
+                                    
+                                    
+                                    ---> Account Page -->CreatAccount --> viewAccount
+                                                ---> findAccount --> ViewAccount--> Edit
+                                                ----> MergeAccount
+Pages :
+
+login page :
+Username, Password and login
+
+welcome page :
+crmsfa and logout
+
+homePage :
+leads, accounts, contact , opportunities..
+
+leadPage :
+createLead , findLead
+
+CreateLeadPage :
+manadatoryFields
+
+ViewPage :
+Get the inner text of the created.
+
+Tests
+1. CreateLead.spec.ts
+---------------------------------------------------------
+Custom Fixture :
+
+In Playwright, a custom fixture is used to create and manage reusable objects before a test runs, and automatically provide them inside the test function.
+
+Here customFixtures.ts is extending the default Playwright test and injecting Page Object Model (POM) classes like:
+LoginPage
+WelcomePage
+HomePage
+LeadPage
+CreateLeadPage
+ViewLeadPage
+
+So instead of creating objects manually inside every test like:
+const login = new LoginPage(page)
+
+You are centralizing object creation in one place and reusing it across all tests.
+
+What custom fixture does in your project:
+
+1. Extends Playwright baseTest
+   import { test as baseTest } from "@playwright/test"
+   export const test = baseTest.extend<myFixtures>({...})
+
+2. Creates POM objects
+   Example:
+   lopfix: async ({ page }, use) => {
+   const lopobj = new LoginPage(page)
+   await use(lopobj)
+   }
+
+3. Injects them into test automatically
+   So in your spec file you can directly use:
+
+   test("Create Lead Verification", async ({ lopfix, wp, hp, lp, clp, vp }) => {
+   await lopfix.loadurl(...)
+   })
+
+Problem it solves
+
+Without fixture:
+* You must create new object in every test
+* Code duplication
+* Hard to maintain
+
+With custom fixture:
+* Centralized object creation
+* Clean test methods
+* Better scalability
+* Reusable architecture
+* Follows Hybrid Framework structure (BDD + POM + Fixture driven execution)
+
+Example
+
+Without fixture:
+test("sample", async ({ page }) => {
+const login = new LoginPage(page)
+await login.loadurl("url")
+})
+
+With fixture:
+test("sample", async ({ lopfix }) => {
+await lopfix.loadurl("url")
+})
+
+So in simple words:
+
+Custom fixture = Dependency injection mechanism in Playwright
+It automatically creates and supplies reusable objects to test methods.
+
+
+
+
+---------------------------------------------------------
+1. Interface :
+-----------------
+
+- Complete hiding of the implemented.
+- 100% abstraction.
+- Only unimplemented methods.
+
+Summarize 
+
+- class extends another class
+- abstract extends another abstract class
+- interface extends another interface
+- class extends abstract class
+- class implements interface
+- class extends abstract class im plemnets interface
+
+We cannot see implementation of your page fixture, context browser in playwright everytging is put in as interface
+
+2. Abstraction
+----------------- 
+
+abstract class :
+
+- 0 to 100% abstraction.
+- Method signature --> unimplementedmethods
+- Implemented methods --> logic 
+
+-----------------------------------------------------------------------------------------
+
+
+faker library installation :
+
+npm install @faker-js/faker@8.4.1
+
+
+While desiging POM things to do:
+
+1. Inheritance => mutilevel inheritance
+2. Abstraction => playwright wrapper class
+3. Data parameterization => json, env, faker(synthetic data)
+4. Custom Fixture => Used to create ready made objects
+
+Inheritance
+
+abstract class -> loginPage --> welcomePage --> leadPage --> CreateLeadPage --> ViewLeadPage
