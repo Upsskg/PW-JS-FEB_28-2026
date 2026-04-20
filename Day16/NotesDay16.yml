@@ -1,0 +1,45 @@
+📑 Agenda for Week 8 Day 2: Playwright Framework
+
+🎯 Focus: Understanding core concepts of Playwright Framework
+
+📆 19th April, Sunday
+
+1. GitActions & CI Integration
+Setting up Playwright tests to run in Continuous Integration (CI) pipelines.
+
+Examples: Configuring GitHub Actions to execute tests on code commits and pull requests.
+
+2. Understanding MCP Server Integration and Playwright Agents.
+Integrating Playwright tests with MCP (Model Context Protocol) server for enhanced test management and reporting.
+Examples: Uploading test results, managing test cases, and generating reports.
+
+3. Playwright Framework Best Practices
+Discussing best practices for structuring and maintaining Playwright test suites.
+
+🕡 Wrap Up / Q&A
+
+---
+
+The Real Difference: Where the boundary is
+Think of it this way:
+
+Copilot lives inside VS Code.
+MCP lets AI step outside VS Code and talk to the real world.
+
+
+Playwright-Specific Example 
+
+Let's say your team has this workflow:
+
+1. Tester raises a bug in JIRA
+2. Dev fixes it
+3. You run Playwright tests
+4. Test report goes to Slack
+5. If pass → merge PR in GitHub
+6. If fail → reopen JIRA ticket
+StepCopilotMCPWrite the Playwright test✅ Yes✅ YesRun the test✅ Yes (in terminal)✅ YesRead the JIRA ticket automatically❌ No✅ YesPost results to Slack❌ No✅ YesReopen JIRA if test fails❌ No✅ YesMerge GitHub PR if test passes❌ No✅ Yes
+Copilot stops at the VS Code boundary.
+MCP crosses into JIRA, Slack, GitHub, CI/CD — all connected.
+
+
+
